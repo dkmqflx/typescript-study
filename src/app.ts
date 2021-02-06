@@ -17,3 +17,6 @@ class App{
 // 그러나 여기서는 null이 아닌 것이 확실하므로 
 new App(document.querySelector('.document')! as HTMLElement)
 
+// basecomponent를 만든다
+// attachTo 함수 정의 
+// page, image 둘다 생성자로 appRoote 입력받는다 
