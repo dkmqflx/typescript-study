@@ -32,7 +32,11 @@
       }
       this.coffeeBeans = beans
     }
+    
+    // private을 사용해서 커피를 만들고자하는 사람이 커피를 만드는데 필요한 함수만 사용할 수 있도록 한다
+    // 이렇게 추상화를 해준다
 
+    // 1. 원하는 만큼 커피를 갈아준다 
     private grindBeans(shots:number){
       console.log(`grinding beans for ${shots}`)
       
@@ -44,10 +48,12 @@
 
     }
 
+    // 2. 커피 기계를 데운다
     private preheat():void{
       console.log('heating up ... ')
     }
 
+    // 3. 기계가 따뜻해 지면 커피를 추출한다 
     private extract(shots:number):CoffeeCup{
       console.log(`Pulling ${shots} shots`)
       return {shots, hasMilk:false}

@@ -20,7 +20,7 @@
   interface CommercialCoffeeMaker{
     makeCoffee(shots:number):CoffeeCup
     fillCoffeeBeans(beans:number):void
-    clean():void
+    clean():void // 기계를 청소하는 함수
   }
 
 
@@ -95,7 +95,7 @@
 
   
   // CoffeeMachine은 CoffeeMaker를 구현했기 때문에 CoffeeMachine은 CoffeeMaker와 동일하다
-  // 인터페이스로 타입을 제한해서 받게 되면 인터페이스에 정의된 메소드만 사용할 수 있다
+  // 인터페이스로 타입을 제한해서 받게 되면 인터페이스에 정의된 메소드만 사용할 수 있다 -> 추상화
   const maker2:CoffeeMaker =  CoffeeMachine.makeMachine(32)
   maker2.makeCoffee(2)
   // maker2.fillCoffeeBeans(32), error 하지만 인터페이스에 정의되어 있지 않은 함수 사용할 수 없다
@@ -106,8 +106,13 @@
   maker3.makeCoffee(2)
   maker3.clean()
 
+
+
+
+
   class AmatuerUser{
     // CoffeeMaker를 생성자의 인자로 받아 커피를 만드는 것 밖에 할 수 없다.
+    // CoffeeMaker 인스턴스를 인자로 받는다
     constructor(private machine:CoffeeMaker){}
     makeCoffee(){
       // CoffeeMaker에 정의된 함수 밖에 사용할 수 없다
@@ -132,8 +137,8 @@
   // 같은 CoffeeMachine를 생성자의 인자로 받아오더라도 
   // 생성자의 타입이 제한되기 때문에 
   // 서로 인터페이스에 규약된 함수만 사용할 수 있다
-  const amatuer = new AmatuerUser(maker2)
-  const pro = new ProBarista(maker3)
+  const amatuer = new AmatuerUser(maker)
+  const pro = new ProBarista(maker)
 
   //동일한 함수 호출하더라도 서로 다른 결과가 출력된다
   amatuer.makeCoffee()

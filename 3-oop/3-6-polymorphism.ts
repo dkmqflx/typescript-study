@@ -5,8 +5,8 @@
 
   type CoffeeCup = {
     shots:number;
-    hasMilk:boolean;
-    hasSugar?:boolean
+    hasMilk?:boolean; // optional
+    hasSugar?:boolean // optional
   }
 
   interface CoffeeMaker{
@@ -108,7 +108,7 @@
   
   // 배열의 타입은 CoffeeMachine 배열
   // CaffeLatteMachine, SweetCoffeeMaker 모두 CoffeeMachine을 상속하기 때문이다 
-  const machines:CoffeeMachine[] = [
+  const machines:CoffeeMaker[] = [
     new CoffeeMachine(16),
     new CaffeLatteMachine(16, '1'),
     new SweetCoffeeMaker(16),

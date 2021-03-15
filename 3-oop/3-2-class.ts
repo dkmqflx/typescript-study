@@ -6,7 +6,7 @@
     hasMilk:boolean;
   }
 
-
+  // 클래스는 관련있는 변수나 함수를 하나로 묶어주는 역할을 한다
   class CoffeeMaker{
 
     // BEANS_GRAMM_PER_SHOT는 한번만 정의되어

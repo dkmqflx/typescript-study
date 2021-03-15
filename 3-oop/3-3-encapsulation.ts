@@ -14,6 +14,7 @@
   class CoffeeMaker{
 
     // 따로 선언안하면 public
+    // 내가 몇개의 BEAN으로 커피를 만드는지 보여주고 싶지 않기 때문에 private 선언
     private static BEANS_GRAMM_PER_SHOT :number = 7 
     private coffeeBeans:number = 0; 
 
@@ -114,6 +115,8 @@
   }
 
   const user2 = new User2('steve', 'Jobs')
+
+  // get 써도 멤버 변수에 접근하는 것 처럼 사용한다 
   console.log(user2.fullName) 
   user2.age = 6
   console.log(user2.fullName) 

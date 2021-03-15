@@ -10,10 +10,10 @@
   }
 
   // CaffeLatteMachine은 CoffeeMachine을 상속하고 우유를 추가할 수 있다
-  // CaffeLatteMachine은 CoffeeMachine을 상속하고 설탕을 추가할 수 있다
+  // SweetCoffeeMaker은 CoffeeMachine을 상속하고 설탕을 추가할 수 있다
   // 우유와 설탕이 모두 들어간 커피를 만들기 위해서는 ?
   // 상속은 수직적 관계를 갖는다
-  // 따라서 내가 상속하는 부모를 수정하면, 해당 부모를 상속하는 모든 자식 클래스에 영향을 미친다
+  // 따라서 내가 상속하는 부모를 수정하면, 해당 부모를 상속하는 모든 자식 클래스에 영향을 미친다는 단점있다
   // TS에는 한가지 이상의 부모클래스를 상속할 수 없다
   // class SweetCaffeLatteMachine extends SweetCoffeeMaker, CaffeLatteMachine{} 이런식 불가능
   // 따라서 TS에서는 composition  사용한다
@@ -106,6 +106,7 @@
       return true;
     }
 
+    // CoffeeCup을 받아서 설탕을 추가해서 다시 리턴해준다
     addSugar(cup:CoffeeCup):CoffeeCup{
       const sugar = this.getSugar() // 설탕을 받아온다
       return{
@@ -170,14 +171,14 @@
 
     makeCoffee(shots:number):CoffeeCup{
       const coffee = super.makeCoffee(shots)
-      const sugarAdded = this.sugar.addSugar(coffee);
-      return this.milk.makeMilk(sugarAdded)
+      const sugarAdded = this.sugar.addSugar(coffee); // 설탕 추가
+      return this.milk.makeMilk(sugarAdded) // 우유 추가
     }
   }
 
 
-  // 이러한 compositio 의 단점으로는 CaffeLatteMachine, SweetCoffeeMaker, SweetCaffeLatteMachine 세 클래스는
-  // CheapMilkSteamer, CandySugarMixer 와 밀접하게 연결되어 있다
+  // 이러한 compositio 의 단점으로는 CaffeLatteMachine, SweetCoffeeMaker, SweetCaffeLatteMachine 
+  // 세 클래스는CheapMilkSteamer, CandySugarMixer 와 밀접하게 연결되어 있다
   // 즉, 밀접하게 coupling되어 있다
   // 그 말은 세 클래스는 CheapMilkSteamer, AutomaticSugarMixer 을 사용해야 하고 
   // 다른 우유 제조기나 슈가믹서 사용하려면 업데이트 해주어야 한다 
