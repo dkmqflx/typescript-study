@@ -178,8 +178,8 @@
   class CaffeLatteMachine extends CoffeeMachine{
     
     // 필요한 것을 외부에서 주입받아서 가져온다 -> Dependency Injection
-    // 클래스를 맏아오는 것이 아니라 인터페이스를 받아온다
-    // 클래스 간에 coupling 되어 있는 것이 아니라 인터페이스를 통해서 의사소통한다
+    // 클래스를 맏아오는 것이 아니라 *인터페이스*를 받아온다
+    // 클래스 간에 coupling 되어 있는 것이 아니라 인터페이스를 통해서 decoupling 해서 의사소통한다
     constructor(beans:number, public readonly serialNumber:string, private milkFrother:MilkFrother){
       super(beans) 
     }
@@ -229,14 +229,18 @@
 
 
 
+  // Milk
   const cheapMilkMaker = new CheapMilkSteamer();
   const fancyMilkMaker = new FancyMilkSteamer()
   const coldMilkMaker = new ColdMilkSteamer()
 
+  // Sugar
   const candySugar =  new CandySugarMixer();
   const sugar = new SugarMixer();
 
   
+  // 인터페이스를 구현한 클래스를 Dependency injection으로 전달해주고
+  // 그 클래스는 인터페이스 타입으로 전달받는다
   // 내가 원하는 방식으로 서로다른 객체를 만들 수 있다
   const sweetCandyMachine = new SweetCoffeeMaker(12, candySugar);
   const sweetMachine = new SweetCoffeeMaker(12, sugar);

@@ -8,13 +8,15 @@
   }
 
   // 3-7-composition-interface 보면 너무 많은 커피머신 만드는데 이렇게 할 필요 없다
+  // 즉, MilkFrother, SugarProvider 인터페이스 정의 후에는 아래처럼
 
   interface CoffeeMaker{
     makeCoffee(shots:number):CoffeeCup
   }
 
-
+  // CaffeLatteMachine, SweetCoffeeMaker, SweetCaffeLatteMachine 다 필요 없이
   // 이 커피머신 하나만 있으면 된다
+  // CoffeeMachine에서 MilkFrother, SugarProvider를 전달받는다
   class CoffeeMachine implements CoffeeMaker{
     private static BEANS_GRAMM_PER_SHOT :number = 7 
     private coffeeBeans:number = 0; 
