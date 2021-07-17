@@ -1,33 +1,92 @@
 {
+  // 객체지향 프로그래밍 언어라는 것은 프로그래밍 패러다임
+  // 패러다임은 프로그래밍을 하는 여러가지 방법 중 하나
+  // OOP는 오브젝트 즉, 객체들을 컨셉으로 프로그래밍 해나가는 것
+  // 오브젝트는 관련된 데이터나 코드를 하나로 묶을 수 있는 것을 말한다
+
+  // OOP와 상반되는 것이 Imperative and Produral 프로그래밍
+  // 명령어와 절차적인 프로그래밍
+  // 명령과 절차를 따라가는 프로그래밍이다
+  // 정의돈 순서대로 절차적으로 함수가 하나씩 호출되는 프로그래밍
+
+  // 하나의 어플리케이션을 만들 때, 함수와 데이터 위주로 구성하는 것
+  // 함수는 또 다른 함수를 호출할 수 있고 함수 안에서 데이터를 사용할 수 있다
+
+  // 절차지향 프로그래밍의 단점으로는 .
+  // 함수가 여러가지가 있고 데이터가 다른 곳에서 업데이트 될 수 있기 때문에 전체적으로 어떻게 동작하는지 이해해야 한다
+  // 그리고 하나를 수정 했을 때 다른 사이드 이펙트가 발생할 확률이 높다
+  // 그래서 절차지향 프로그래밍은 유지 보수 및 확장이 어렵다는 단점 있다
+
+  // 객체 지향 프로그래밍은 객체를 정의해서 객체 끼리 의사소통 하도록 만드는 것을 말한다
+  // 여기서 객체는 우리 주변의 모든 사물이 될 수 있다.
+  // 서로 관련있는 데이터와 함수를 오브젝트로 정의해서 프로그래밍 하는 것이 객체지향
+  // 객체지향 프로그래밍은 오브젝트 단위로 만들어나가기 때문에 해당 오브젝트에서 문제가 생기면 그 오브젝트만 수정하면 되고
+  // 오브젝트를 반복해서 사용할 수 도 있기 때문에 확장성도 높아진다
+
+  // 중요한 객체지향 원칙
+
+  // 캡슐화
+  // 서로 연관있는 데이터와 함수를 한 오브젝트 안에 담아 놓고
+  // 외부에서 보일 필요가 없는 데이터를 잘 숨겨놓음으로써 캡슐화 하는 것
+  // 어떤 관련 있는 데이터를 오브젝트로 묶어 낼 것인지
+  // 어떤 데이터는 외부에서 볼 수 있고, 볼 수 없는 지를 생각하고 나가는 것이 OOP의 출발점
+
+  // 예를들어, 고양이의 상태, 배고프다던지 잠이온다든가 하는 상태를 외부에서 설정할 수 없다
+  // 이런 것들은 고양이 내부에 있는 상태
+  // 이 고양이의 내부 상태를 외부에서 설정할 수 없다
+  // 고양이의 상태를 외부에서 설정할 수 는 없지만 고양이와 놀아주고 먹이를 주는 외부 행동,
+  // 즉 외부 함수를 통해서 고양이의 내부 상태를 변경할 수 있다
+  // 이것이 캡슐화
+
+  // 추상화
+  // 추상화는 캡슐화와 밀접한 관련이 있다
+  // 추상성은 내부의 복잡한 기능을 다 이해하지 않고 간단한 인터페이스를 통해서 쓸 수 있는 것을 말한다
+  // 예를 들어, 커피머신이 있으면 커피 머신 내부적으로 어떻게 동작하는지 이해하지 않고
+  // 기계에서 제공하는 버튼만 눌러도 커피를 만들 수 있는 것
+  // 추상성을 통해서 외부에서는 내부에서 어떻게 구현되어 있는지, 얼마나 복잡한지 등을 신경쓰지 않고
+  // 외부에서만 보이는 인터페이스 함수를 이용해서 오브젝트를 사용할 수 있다
+
+  // 상속
+  // 상속은 IS-A 관계
+  // 에스프레소 모신은 커피머신이기 때문이다
+  // 이처럼 상속은 받는 자 식 클래스는 부모 클래스라고도 말할 수 있다
+  // 브라우저 위에 쓰이는 DOM 요소도 다 상속을 이용해서 구현되어져 있다
+  // HTMLElment라는 클래스는 Element 클래스를 상속하고,
+  // Element 클래스는 Node라는 것을 상속한다
+  // 그래서 Node 안에 있는 속성과 모든 함수를 Element가 사용할 수 있는 것
+  // 그리고 Node는 EventTarget을 상속 받았기 때문에 EventTarget에 있는
+  // 이벤트 관련된 속성과 모든 함수들을 Node에서 사용할 수 있는 것
+
+  // 다형성
+  // 다형성은 다양한 형태를 말한다
 
   // 절차지향 방식으로 코딩
 
-
   // 커피 객체
   type CoffeeCup = {
-    shots:number;
-    hasMilk:boolean;
-  }
-  
-  // primitive에 바로 값 할당할 때는 타입 추론으로 타입 적어주지 않는다
-  const BEANS_GRAMM_PER_SHOT = 7 
-  let coffeeBeans:number = 0;
+    shots: number;
+    hasMilk: boolean;
+  };
 
-  function makeCoffee(shots:number):CoffeeCup{
-    if(coffeeBeans < shots * BEANS_GRAMM_PER_SHOT){
-      throw new Error('Not enough coffee beans!')
+  // primitive에 바로 값 할당할 때는 타입 추론으로 타입 적어주지 않아도 된다
+  const BEANS_GRAMM_PER_SHOT = 7;
+  let coffeeBeans: number = 0; // 명시적으로 하고 싶다면 적어도 된다
+
+  function makeCoffee(shots: number): CoffeeCup {
+    if (coffeeBeans < shots * BEANS_GRAMM_PER_SHOT) {
+      throw new Error("Not enough coffee beans!");
+      // 에러 던지면 아래 부분 부터 실행되지 않는다
     }
 
-    coffeeBeans =- shots * BEANS_GRAMM_PER_SHOT;
+    coffeeBeans = -shots * BEANS_GRAMM_PER_SHOT;
     return {
       shots, // key - value 이름 동일하면 생략가능
-      hasMilk:false
-    }
-
+      hasMilk: false,
+    };
   }
-  coffeeBeans += 3*BEANS_GRAMM_PER_SHOT // 커피 3잔 만들 coffeeBeans추가 
-  const coffee = makeCoffee(2)
-  console.log(coffee)
+  coffeeBeans += 3 * BEANS_GRAMM_PER_SHOT; // 커피 3잔 만들 coffeeBeans추가
+  const coffee = makeCoffee(2);
+  console.log(coffee);
 }
 
 // 코드보면 필요한 변수, 함수등이 모두 전역에 선언되어 있다

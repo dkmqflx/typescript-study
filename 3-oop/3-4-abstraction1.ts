@@ -1,83 +1,200 @@
-
 {
-
   type CoffeeCup = {
-    shots:number;
-    hasMilk:boolean;
-  }
+    shots: number;
+    hasMilk: boolean;
+  };
 
   // 외부에서 클래스를 바라봤을 때 너무 인터페이스가 복잡해서
   // 너무 사용할 수 있는 함수가 많아서 어떤 것을 사용해야할 지 모를 때
-  // 이 때 추상화를 통해 핖요한 인터페이스만 제공함으로써 클래스를 사용하기 쉽게 해준다 
+  // 이 때 추상화를 통해 핖요한 인터페이스만 제공함으로써 클래스를 사용하기 쉽게 해준다
 
   // 여기는 접근제어자를 사용해서 추상화한다
 
-  class CoffeeMaker{
+  class CoffeeMaker {
+    private static BEANS_GRAMM_PER_SHOT: number = 7;
+    private coffeeBeans: number = 0;
 
-    private static BEANS_GRAMM_PER_SHOT :number = 7 
-    private coffeeBeans:number = 0; 
-
-
-    private constructor(coffeeBeans:number){
-      this.coffeeBeans = coffeeBeans
+    private constructor(coffeeBeans: number) {
+      this.coffeeBeans = coffeeBeans;
     }
 
-    static makeMachine(coffeeBeans:number):CoffeeMaker{
-      return new CoffeeMaker(coffeeBeans)
+    static makeMachine(coffeeBeans: number): CoffeeMaker {
+      return new CoffeeMaker(coffeeBeans);
     }
 
-    fillCoffeeBeans(beans:number){
-      if(beans < 0){
-        throw new Error('value for beans should be greater than 0')
+    fillCoffeeBeans(beans: number) {
+      if (beans < 0) {
+        throw new Error("value for beans should be greater than 0");
       }
-      this.coffeeBeans = beans
+      this.coffeeBeans = beans;
     }
-    
+
     // private을 사용해서 커피를 만들고자하는 사람이 커피를 만드는데 필요한 함수만 사용할 수 있도록 한다
+    // 즉, 외부에서 알 필요가 없는 함수를 private로 선언해준다
     // 이렇게 추상화를 해준다
 
-    // 1. 원하는 만큼 커피를 갈아준다 
-    private grindBeans(shots:number){
-      console.log(`grinding beans for ${shots}`)
-      
-      if(this.coffeeBeans < shots * CoffeeMaker.BEANS_GRAMM_PER_SHOT){
-        throw new Error('Not enough coffee beans!')
+    // 1. 원하는 만큼 커피를 갈아준다
+    private grindBeans(shots: number) {
+      console.log(`grinding beans for ${shots}`);
+
+      if (this.coffeeBeans < shots * CoffeeMaker.BEANS_GRAMM_PER_SHOT) {
+        throw new Error("Not enough coffee beans!");
       }
 
-      this.coffeeBeans =- shots * CoffeeMaker.BEANS_GRAMM_PER_SHOT;
-
+      this.coffeeBeans = -shots * CoffeeMaker.BEANS_GRAMM_PER_SHOT;
     }
 
     // 2. 커피 기계를 데운다
-    private preheat():void{
-      console.log('heating up ... ')
+    private preheat(): void {
+      console.log("heating up ... ");
     }
 
-    // 3. 기계가 따뜻해 지면 커피를 추출한다 
-    private extract(shots:number):CoffeeCup{
-      console.log(`Pulling ${shots} shots`)
-      return {shots, hasMilk:false}
-
+    // 3. 기계가 따뜻해 지면 커피를 추출한다
+    private extract(shots: number): CoffeeCup {
+      console.log(`Pulling ${shots} shots`);
+      return { shots, hasMilk: false };
     }
 
-    makeCoffee(shots:number):CoffeeCup{
-      
-      this.grindBeans(shots) // 커피를 갈고
-      this.preheat(); // 데운 다음
-      return this.extract(shots) //내려준다
-
+    makeCoffee(shots: number): CoffeeCup {
+      // 커피를 만들기 위한 각 단계
+      this.grindBeans(shots); // 1. 커피를 갈고
+      this.preheat(); // 2. 데운 다음
+      return this.extract(shots); // 3. 내려준다
     }
-
   }
 
-  const maker =  CoffeeMaker.makeMachine(32)
-  // maker. -> maker 다음 . 누르면 
-  // 너무 많은 함수가 제공되어서 어떤 것 부터 호출해서 커피를 만들 수 있는지 헷갈린다 
+  const maker = CoffeeMaker.makeMachine(32);
+  // 앞 에서 정의한 클래스에서 private 을 함수 앞에 정의 하지 않은 상태에서
+  // maker. -> maker 다음 . 누르면
+  // 너무 많은 함수가 제공되어서 어떤 것 부터 호출해서 커피를 만들 수 있는지 헷갈린다
   // 이 때 추상화를 사용해서 인터페이스를 간편하게 만들어준다
   // 접근제어자를 사용해서 추상화할 수 도 있고
-  // 인ㅌ퍼ㅔ이스를 사용해서 추상화를 할 수도 있다
-  maker.fillCoffeeBeans(32)
-  maker.makeCoffee(2)
+  // 인터페이스를 사용해서 추상화를 할 수도 있다
+  maker.fillCoffeeBeans(32);
+  maker.makeCoffee(2);
 
+  // 제어자 ( private ) 을 써서 커피를 생산해내는 내부로직을 외부에서 보이지 않게 만든것은
+  // 추상화가 아니라 캡슐화로 보는것이 맞는걸까요>?
 
+  // 강의 4:53 예제 처럼 캡슐화를 통해서 추상화를 성취할 수 있어요.
+
+  // 특정한 프로그래밍 언어에서 interface라는 문법을 지원하지 않는 경우에는
+  // 캡슐화를 통해 추상화를 구현해야 해요.
+
+  // 여기서 포인트는! 추상화를 했다고 하지 않았고,
+  // 캡슐화를 통해서 추상화를 성취했다 라고 했습니다
+
+  // 단순히 private, public 제어자를 붙이는 이런 캡슐화가 추상화다로고는 볼 수 없는것이...
+  // 추상화라는것은 외부에서 이 클래스를 사용할때
+  // 어떻게, 무엇을 사용할 것인가? 이 부분을 고민하면서
+  // 클래스에서 기능을 내부 기능과 외부에서 필요한 기능을 나누고
+  // 사용자가 사용하기 편한, 의미가 맞는 함수의 형태로 노출하는 작업,
+  // 이런 프로세스 자체를 추상화라고 부르기 때문이죠
 }
+
+// 추상화와 캡슐화의 차이
+
+// 지금 모션js로만 구현하고 다시 복습차원에서 듣고 있는데 여전히 캡슐화와 추상화의 차이를 잘 모르겠어요
+// 캡슐화는 데이터를 숨겨서 외부에 안보이게하고
+// 추상화는 클래스의 내부복잡한 기능을 이해하지않고도 간단한 인터페이스롤 통해 정말 필요한 것말 노출 시켜서 사용자가 클래스를 간단히 쓸 수 있는 것 정도로 이해했습니다.
+
+// 그래서 저는 캡슐화는 정보 숨기는데 중점을 두고
+// 추상화는 필요한 것만 노출시켜 클래스 이용하게하는 것으로 이해를 했는데 캡슐화 4.10강의에 있는 static-캡슐화질문 답글에
+// '캡슐화는 내부의 로직들이 외부에서 보이지 않도록, 꼭 필요한 것만 노출하는 뜻'이라는 답글을 보고 너무 헷갈렸어요ㅠㅠ
+
+// 추상성도 불필요한 정보는 숨기고 필요한 정보를 노출시키는 것 아닌가유?..
+// 그리고 좀 더 검색을 해보니까 캡슐화랑 정보은닉은 또 다르다고하던데 더 알아보면  알아볼수록 혼란만 가중되고 있어요 .... ㅠㅠ 정보은닉을 하는 방법이 캡슐화인건가요??
+
+// 영상에서 추상화 할수 있는 방법 2가지이상에
+
+// 1.캡슐화를 통한 추상화와
+
+// 2.인터페이스를 통한 추상화
+
+// 라고 말씀하셨는데 그럼 살짝 추상화 ⊃ 캡슐화 ⊃ 정보은닉 이런건가요?
+
+// 엘리님 캡슐화와 추상화 강의  처음시작하실때
+// 캡슐화는 멤버변수에 중점을 두고 설명하시고 추상화는 메서드에 중점을 두고 설명하시던데
+// 캡슐화는 멤버변수데이터를 숨기는 거에 좀 더 의의를 두고 추상화는 메서드에 의의를 둔다고 보면 되나요????
+
+// 예를 들어 클래스를 만들때 뭐 상수나, 멤버변수는 외부에 노출하지못하도록 ,사용자가 맘대로 사용하지 못하도록하기위해
+//  캡슐화로지정하고 또 클래스를 간편하게 쓰기위해 인터페이스를 통해 클래스의 특정 메서드만 쓰게끔 하는 것이 추상화라고 보면되나요???
+
+// -------
+
+// 자, 지금부터 제가 강의에서 언급한 고양이 예제로 조금만 쉽게 설명하도록 노력해 볼께요.
+
+// 고양이의 내부 상태 (배고프고, 즐겁고, 기분좋고, 잠오고) 이런것들은 외부에서 설정할 수 있는게 아니예요. 그쵸?
+// 외부에서 함부로 설정할 수 없는 것들을 private와 같은 접근 제어자를 써서 외부에서 볼 수 없도록 만드는것을 정보 은닉, 캡슐화라고 해요.
+// 외부에서 접근이 가능하고, 해도 되고, 필요한 것들만 노출하는것도 정보 은닉, 캡슐화라고 해요 :)
+
+// 여기서 고양이와 놀아주다 (play)같은 함수만 외부에 노출하는것을 (public으로 설정) 캡슐화라고 해요.
+// 자, 이런 함수를 외부에서 호출이 가능하도록 만든다고 해서 추상화라고 하지는 않아요.
+
+// 추상화란, 외부에서 어떤 형태로, 공통적으로 어떻게 이 클래스를 이용하게 할것인가... 이걸 고민하는 단계예요.
+
+// 아, Cat 고양이는 Play라는 함수가 있어. 그리고 모든 동물 Animal과 놀아 줄 수 있어.
+// 그러니깐 Animal 이라는 부모 클래스를 만들어서 play를 할수 있도록 만들어야지!
+
+// class Animal {
+
+//     play() {}
+
+// }
+
+// class Cat extends Animal { }
+
+// 이렇게 상속을 통해 추상화를 할 수도 있죠 :)
+// 그러면 동물을 상속하는 모든 동물들은 다 놀아 줄 수 있는 동물일까요?
+// 조금 잘못된 추상화 같나요? 그러면 또 이렇게 추상화를 해볼 수 있어요
+
+// 아, 놀아 줄 수 있는 동물 클래스들이 공통적으로 따라야 하는 함수,
+// 인터페이스는 무엇이 있을까? 아하! Playable 이라는 인터페이스를 만들자
+
+// interface Playable {
+
+//     play();
+
+// }
+
+// 이제 이 인터페이스를 구현하는 클래스들은 다 놀아줄 수 있는 클래스야!
+
+// class Cat implements Playable {
+
+//     play() {
+
+//        console.log("재밌게 놀아요옹🐱")
+
+//     }
+
+// }
+
+// class Dog implements Playable {
+
+//     play() {
+
+//        console.log("재밌게 놀아요멍🐶")
+
+//     }
+
+// }
+
+// 아하! Cat이랑 Dog랑 놀아줄 수 있는 친구들이군!
+
+// class Tiger {
+
+// }
+
+// 아뉘, Tiger는 Playable 인터페이스를 구현하지 않았네!
+
+// 놀아줄 수 없는 클래스구나!
+
+// 이런식으로 외부에서 어떻게 이 클래스를 사용할 수 있는지,
+
+// 인터페이스나 다른 부모 클래스를 통해 공통적인 기능들을 추출하는 이런 작업들을 추상화라고 볼 수 있어요 💡
+
+// -----
+
+// 단순히  외부로  노출여부에따라 캡슐화 추상화가아니라
+// 추상화는  클래스를 간편하게 쓰기위해서 어떻게 꾸며야하는지, 공통점을 찾고 불필요한  세부사항은 제거해서  클래스를 간단하게 만드는 단계이고
+// 캡슐화는 클래스를 만들때 외부에서 맘대로 사용하지못하도록 데이터를 보호하는 역할이군요!!
