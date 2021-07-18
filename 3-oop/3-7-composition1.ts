@@ -26,6 +26,7 @@
   // 따라서 TS에서는 composition  사용한다
 
   // Favor COMPOSITION over inheritance, 상속보다 컴포지션을 선호하라
+  // 여기서 COMPOSITION은 구성요소를 의미한다.
   // 컴포지션을 필요한 것을 가져와서 조립해나가는 것
 
   interface CoffeeMaker {
@@ -89,10 +90,11 @@
       console.log("Steaming soem Milk");
     }
 
+    // 외부에서는 이 함수를 사용한다
     // CoffeeCup을 받으면 우유를 추가해서 다시 리턴해준다
     makeMilk(cup: CoffeeCup): CoffeeCup {
       // CaffeLatteMachine와 달리 super 없다.
-      this.steamMilk;
+      this.steamMilk; // 우유 거품을 낸다
       return {
         ...cup,
         hasMilk: true,
@@ -127,7 +129,7 @@
     constructor(
       beans: number,
       public readonly serialNumber: string,
-      private milkFrother: CheapMilkSteamer
+      private milkFrother: CheapMilkSteamer // private 때문에클래스 멤버변수가 된다
     ) {
       super(beans);
     }
@@ -144,7 +146,7 @@
 
   // 설탕 커피만든다
   class SweetCoffeeMaker extends CoffeeMachine {
-    constructor(private beans: number, private sugar: CandySugarMixer) {
+    constructor(beans: number, private sugar: CandySugarMixer) {
       super(beans);
     }
 
@@ -154,13 +156,18 @@
     }
   }
 
-  // 우유와 설탕 모두 들어간 커피 만든다
+  // 이처럼 각각의 클래스에서 필요한 것을 매번 구현하는 것이 아니라
+  // 외부에서 만들어진, 우유와 설탕을 넣는 클래스를 구현한 것을 따로 클래스를 만들어둠으로써
+  // 필요한 곳에서 사용한느 컴포지션으로 구현했다
+  // 컴포지션은 코드의 재사용성을 굉장히 높혀준다
+
+  // 우유와 설탕 모두 들어간 커피 만드는 것도 쉽게할 수 있다
   class SweetCaffeLatteMachine extends CoffeeMachine {
     // 필요한 기능을 외부에서 가져온다
     // 그리고 milk와 sugar가 내부적으로 어떻게 작동하는지는 알지 못해도 사용할 수 있다
     // 이러한 compositoin은 코드의 재사용성을 굉장히 높혀준다
     constructor(
-      private beans: number,
+      beans: number,
       private milk: CheapMilkSteamer,
       private sugar: CandySugarMixer
     ) {
@@ -174,12 +181,18 @@
     }
   }
 
-  // 이러한 compositio 의 단점으로는 CaffeLatteMachine, SweetCoffeeMaker, SweetCaffeLatteMachine
-  // 세 클래스는CheapMilkSteamer, CandySugarMixer 와 밀접하게 연결되어 있다
+  // 이러한 composition 의 단점으로는 CaffeLatteMachine, SweetCoffeeMaker, SweetCaffeLatteMachine
+  // 세 클래스는 CheapMilkSteamer, CandySugarMixer 와 밀접하게 연결되어 있다
   // 즉, 밀접하게 coupling되어 있다
-  // 그 말은 세 클래스는 CheapMilkSteamer, AutomaticSugarMixer 을 사용해야 하고
-  // 다른 우유 제조기나 슈가믹서 사용하려면 업데이트 해주어야 한다
+  // CaffeLatteMachine, SweetCoffeeMaker, SweetCaffeLatteMachine 의 생성자롤 브면
+  // 각각 Dependency Injection으로 전달받을 수 있는 클래스가 한정되어 있다.
+  // 그 말은 세 클래스는 CheapMilkSteamer, CandySugarMixer 을 사용해야 한다.
+
+  // 즉, 내가 다른 우유 제조기나 슈가믹서를 만들어서 사용하는 경우에는
+  // 이 클래스들에 있는 우유 제조기, 슈가 믹서를 업데이트 해주어야 한다
   // 클래스와 클래스 사이를 관계짓는 것, 잘 알게하는 것은 좋지 않다
+  // 즉, SweetCaffeLatteMachine 입장에서는 우유가 어떻게 만들어지고 설탕이 어디서 오는지 알 필요 없이
+  // 우유 거품기와 설탕을 사용할 수 있도록 해야 한다
 
   const cheapMilkMaker = new CheapMilkSteamer();
   const candySugar = new CandySugarMixer();
@@ -194,8 +207,40 @@
     candySugar
   );
 
-  // 클래스 사이에 상호작용하는, 대화하는 경우에는 계약서에 의거해서 의사소통을 해야한다
+  // 클래스 사이에 상호작용하는, 대화하는 경우에는 클래스 자신을 노출하는 것이 아니라
+  // 계약서에 의거해서 의사소통을 해야한다
   // 계약서는 인터페이스이다
   // 즉, 인터페이스를 통해 서로간에 상호작용을 하도록 한다
-  // 이것이 바로 decoupling
+  // 이것이 바로 decoupling의 원칙
 }
+
+// overload: 동일한 이름으로 여러개의 함수 정의가 있을때 (보통 인자들이 다름)
+
+// concat(item: T);
+// concat(items: T[]);
+
+// override: 자식 클래스에서 부모 클래스의 함수를 재정의/구현 할때
+
+// class Parent {
+//    add() { ..... }
+// }
+
+// class Child extends Parent {
+//    add() { ..... }. // overriding
+// }
+
+// composition 과 dependancy injection
+// 이 둘은 외부에서 의존성을 주입받는 같은 개념인가요? 같은말? 인가요?
+
+// 함께 쓰이는 기술 이긴 하지만, 같은 개념은 아니예요 :)
+
+// class CoffeeMachine {
+
+//   private sugar: Sugar;
+//   constructor() {
+//       this.sugar = new Sugar();
+//   }
+// }
+
+// 여기 CoffeeMachine도 컴포지션을 사용해서 설탕을 함께 조립해서 사용하지만,
+// 외부에서 설탕을 주입 받은것이 아니라, 내부에서 만들어서 사용하죠? :)
