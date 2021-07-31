@@ -1,13 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <script type=module src="./10-3-module1.js"></script>
-  <script type=module src="./10-3-module2.js"></script>
-</head>
-<body>
-  
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 모듈화 할 때는 type을 module로 정의 -->
+    <script type="module" src="./10-3-module1.js"></script>
+    <script type="module" src="./10-3-module2.js"></script>
+  </head>
+  <body></body>
 </html>
+
+<!-- 
+
+Q. 파일 위치 적는 법이 왜 다른지 궁금해요
+html 파일에서는 같은 폴더 안의  파일을 가져오는 거면     
+
+<script  src="nain.js" defer></script> 이렇게 쓰잖아요.
+
+근데 왜 모듈을 import할때는 from './main.js' 이렇게 쓰는 지 궁금합니다.
+
+
+
+모듈 가져올 때 from 뒤에 ./를 빼보니까 Relative reference 형식으로 써야한다고 에러 메세지가 뜨더라고요.
+
+왜 이런 차이가 있는지랑 어떨때 어떤 방법으로 써야하는지? 구분할 수 있는 방법이 있을까요?
+
+
+A.
+HTML에서 그렇게 작성하시면 자동으로 현재 HTML파일이 있는 현재 폴더에서 
+파일을 찾아서 링크 하게 되지만, node 에서는 꼭! 상대적인 경로로 작성해줘야 해요.
+
+이건 노드가 동작하는 방식이라, (일정의 정해진 규칙 같은 아이예요)
+상대적인 경로로 작성하지 않으면 현재 프로젝트의 node_modules 폴더 안을 찾고, 
+아무것도 못찾으면 global로 설정된 node_modules에서 찾게 되요.
+그곳들에도 없으면 Coder Lee님이 보신 에러 메시지가 보여지죠 :)
+ -->

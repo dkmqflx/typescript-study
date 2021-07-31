@@ -1,4 +1,4 @@
-// js에서 모듈이란 파일 아네 파일을 모듈화해서 작성하는 것을 말한다
+// js에서 모듈이란 파일 안의 코드를 모듈화해서 작성하는 것을 말한다
 // 한 모듈이란 한 파일안에 작성된 코드를 말한다
 // 모듈화 하지 않으면 파일안에 작성된 모든 코드들은 window/global에 선언된다
 // 이것의 치명적인 약점은 각각의 파일에 같은 이름의 함수를 등록해 놓았다면 이름 때문에 충돌이 발생할 수 있다
@@ -11,16 +11,16 @@
 // 다른 파일에서, 또 다른 파일의 함수를 사용하고 싶으면
 // 해당 파일에서 함수를 export 해주고, 사용하는 쪽에서는 import 해주어야 한다
 
-
+// 이렇게 export 다음에 default라고 하게 되면
+// 무조건 이 모듈을 import 하면 이 함수를 기본으로 export 할거라는 뜻
 // 한 파일안에 두가지 파일 이상 default 쓸 수 없다
-export default function add(a, b){
-  return a+b
+export default function add(a, b) {
+  return a + b;
 }
 
-export function print(){
-  console.log('print')
-
+export function print() {
+  console.log("print");
 }
 
 // 변수도 export할 수 있다
-export const number = 10
+export const number = 10;
