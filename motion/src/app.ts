@@ -2,6 +2,7 @@ import { TodoComponent } from './components/page/item/todo.js';
 import { NoteComponent } from './components/page/item/note.js';
 import { ImageComponent } from './components/page/item/image.js';
 import { PageComponent } from './components/page/page.js';
+import { VideoComponent } from './components/page/item/video.js';
 
 class App {
   private readonly page: PageComponent;
@@ -20,6 +21,12 @@ class App {
 
     const todo = new TodoComponent('Todo Title', 'Todo Item');
     todo.attachTo(appRoot, 'beforebegin');
+
+    const video = new VideoComponent(
+      'Vidoe Title',
+      'https://youtu.be/8AqRRtUA7ko'
+    );
+    video.attachTo(appRoot, 'beforebegin');
   }
 }
 
