@@ -8,10 +8,18 @@ export class VideoComponent extends BaseComponent {
         </div>
       </section>
     `);
-        console.log(url);
         const iframe = this.element.querySelector('.video__iframe');
-        iframe.src = 'https://youtu.be/8AqRRtUA7ko';
+        iframe.src = this.convertToEmbeddedURl(url);
         const titleElement = this.element.querySelector('.video__title');
         titleElement.textContent = title;
+    }
+    convertToEmbeddedURl(url) {
+        const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:(?:youtube.com\/(?:(?:watch\?v=)|(?:embed\/))([a-zA-Z0-9-]{11}))|(?:youtu.be\/([a-zA-Z0-9-]{11})))/;
+        const match = url.match(regExp);
+        const videoId = match ? match[1] || match[2] : undefined;
+        if (videoId) {
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+        return url;
     }
 }
