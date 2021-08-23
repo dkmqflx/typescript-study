@@ -1,22 +1,25 @@
 import { BaseComponent, Component } from './../components.js';
 
-/*
-
-composable 
-
-여러가지를 모아서 조립하고 묶을 수 있다는 읭미 
-composable 인터페이스를 규격하면 다른 요소들을 함께 조립할 수 있는 아이를 말한다
-
-*/
-
 export interface Composable {
   addChild(child: Component): void;
+}
+
+// 각각의 vidoe, note 같은 이런 섹션들을 감쌀 수 있는 컨테이너는 무조건 Component와 Composable 인터페이스를 구현한다
+interface SectionContainer extends Component, Composable {
+  setOnCloseListener(listener: OnCloseListener): void;
 }
 
 // 아무런 인자를 전달받지도 리턴하지도 않는다
 type OnCloseListener = () => void;
 
-class PageItemComponent extends BaseComponent<HTMLElement> implements Composable {
+type SectionContainerConstructor = {
+  new (): SectionContainer;
+  // 생성자를 정의하는 타입
+  // 아무 것도 전달받지 않는 생성자인데
+  // 생성자를 호출하면 SectionContainer 인터페이스를 규격하는 어떤 클래스라도 괜찮다
+};
+
+export class PageItemComponent extends BaseComponent<HTMLElement> implements SectionContainer {
   private closeListner?: OnCloseListener;
   // 외부로 부터 전달받은 콜백함수를 저장하는 변수
   constructor() {
@@ -49,12 +52,21 @@ class PageItemComponent extends BaseComponent<HTMLElement> implements Composable
   }
 }
 export class PageComponent extends BaseComponent<HTMLUListElement> implements Composable {
-  constructor() {
+  // 생성자에 어떤 타입의 데이터를 만들 수 있는지 정의해준다
+  constructor(private pageItemConstructor: SectionContainerConstructor) {
     // 부모 클래스의 생성사 호출할 때 super 사용한다
     super('<ul class="page"></ul>');
   }
   addChild(section: Component) {
-    const item = new PageItemComponent();
+    // const item = new PageItemComponent();
+    // 현재 PageComponent는 PageItemComponent라는 하나의 UI 밖에 만들지 못한다
+    // 하지만 나중에 사용자가 다크도드, 라이트 모드 쓸지 결정할 수 있다
+    // 이를 어떠한 타임의 PageItemComponent를 만들건지 DI를 사용해서 해결할 수 있다
+    // 나중에 다른 타입의 PageItemComponent를 전달해줄 수 있다
+
+    const item = new this.pageItemConstructor();
+    // 내부에서 클래스를 만드는 것이 아니라 외부에서 전달된 pageItemConstructor를 사용해서 클래스를 만든다
+
     item.addChild(section);
     item.attachTo(this.element, 'beforeend');
     item.setOnCloseListener(() => item.removeFrom(this.element));

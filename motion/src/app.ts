@@ -2,7 +2,7 @@ import { Component } from './components/components';
 import { TodoComponent } from './components/page/item/todo.js';
 import { NoteComponent } from './components/page/item/note.js';
 import { ImageComponent } from './components/page/item/image.js';
-import { Composable, PageComponent } from './components/page/page.js';
+import { Composable, PageComponent, PageItemComponent } from './components/page/page.js';
 import { VideoComponent } from './components/page/item/video.js';
 
 class App {
@@ -14,7 +14,7 @@ class App {
   private readonly page: Component & Composable;
 
   constructor(appRoot: HTMLElement) {
-    this.page = new PageComponent();
+    this.page = new PageComponent(PageItemComponent);
     this.page.attachTo(appRoot);
     //생성자 안에서 PageComponent를 만들고 있는데, 안에서 다른 어떤 클래스를 만드는 것은 위험하다
     // 이런 것들은 디펱던시 인젝션을 이용해서 외부로 주입을 받는 것이 더 확장가능하고
