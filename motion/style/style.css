@@ -7,11 +7,7 @@
   --border-color: #3f3f3f;
   --shadow-color: #202020;
   --document-bg-color: #68686850;
-  --component-bg-gradient: radial-gradient(
-    circle,
-    #646464e6 0%,
-    #363636e6 100%
-  );
+  --component-bg-gradient: radial-gradient(circle, #646464e6 0%, #363636e6 100%);
   --smokywhite: #dddbd8;
   --black: #000000;
   --translucent-black: #00000099;
@@ -112,37 +108,34 @@ body {
   text-align: center;
 }
 
-/* 
+/* -- Dialog -- */
 
-엘리님 css 선택자 사용 관련해서 질문있습니다.
-
-엘리님 제가 css 컨벤션 공부하다가 궁금한 내용이 있습니다.
-
-
-
-css에서 자식, 자손 선택자 사용에 대해서 궁금한데 엘리님은 사용하려는 태그들에 다 class 이름을 따로 붙여주는데 자식 자손 선택자를 사용하는건 클린하지 않은 코드인가요??
-
-
-
-예를들어 header안에 있는 ul인데 내가 ul을 꼭 한번만 사용한다고 가정 했어도
-
-
-
-header ul {
-
-
-
+dialog {
+  border: 0;
 }
 
+.dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 1.2rem;
+  background-color: var(--document-bg-color);
+}
 
-
-로 하게되면 클린코드가 아닌지 궁금합니다.!!
-
-CSS 선택자가 동작하는 원리를 살펴보면, 
-
-우리 생각에는 header ul 이렇게 적으면 header 태그 중에 그안에 있는 ul 태그를 고를 것 같죠? 그런데 브라우저 CSS 엔진은 반대로.... 모든 ul 태그들을 다 찾아서 그 중에 부모가 header인 요소들만 필터링 해요 😂
-
-그래서 결국 모든 페이지의 ul태그를 찾게 되죠.
-
-그래서 가급적 명확한 클래스명이나 아이디를 이용하는게 더 좋아요 :)
-*/
+.dialog__container {
+  display: flex;
+  flex-direction: column;
+  padding: 0.4em;
+  width: 32em;
+  background: var(--bg-accent-color);
+  background: var(--component-bg-gradient);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: 2px 2px 20px var(--shadow-color);
+}

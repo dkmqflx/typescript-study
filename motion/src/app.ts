@@ -4,32 +4,17 @@ import { NoteComponent } from './components/page/item/note.js';
 import { ImageComponent } from './components/page/item/image.js';
 import { Composable, PageComponent, PageItemComponent } from './components/page/page.js';
 import { VideoComponent } from './components/page/item/video.js';
+import { InputDialog } from './components/dialog/dialog.js';
 
 class App {
-  // private readonly page: PageComponent;
-  // 나중에 pageComponent를 외부에서 받아올 수 있다
-  // 따라서 PageComponent라고 coupling 하기 보다는
-  // page는 Component 중 하나이고 Composable interface구현한 것이라고 처리해준다
-
   private readonly page: Component & Composable;
 
   constructor(appRoot: HTMLElement) {
     this.page = new PageComponent(PageItemComponent);
     this.page.attachTo(appRoot);
-    //생성자 안에서 PageComponent를 만들고 있는데, 안에서 다른 어떤 클래스를 만드는 것은 위험하다
-    // 이런 것들은 디펱던시 인젝션을 이용해서 외부로 주입을 받는 것이 더 확장가능하고
-    // 나중에 유닛 테스트를 해나가기에도 좋다 -> 나중에 수정
 
     const image = new ImageComponent('Image Title', 'https://picsum.photos/600/300');
 
-    // image.attachTo(appRoot, 'beforebegin');
-    /*
-    
-    페이지 안에서 내부적으로 전달받은 컴포넌트를 PageitemComponent로 한단계 감싸서
-    페이지 안에다가 추가해준다.
-    그러면 page가 알아서 Component로 한단계 감싼 다음 만들어준다 
-    이러한 내부사항을 신경쓰지 않고 아래처럼 변경할 수 있다 
-    */
     this.page.addChild(image);
 
     const note = new NoteComponent('Note Title', 'Note body');
@@ -40,6 +25,22 @@ class App {
 
     const video = new VideoComponent('Vidoe Title', 'https://youtu.be/8AqRRtUA7ko');
     this.page.addChild(video);
+
+    const imageBtn = document.querySelector('#new-image')! as HTMLButtonElement;
+    imageBtn.addEventListener('click', () => {
+      const dialog = new InputDialog();
+
+      dialog.setOnCloseListener(() => {
+        dialog.removeFrom(document.body);
+      });
+
+      dialog.setOnSubmitListener(() => {
+        // 섹션을 만들어서 페이지에 추가해준다
+        dialog.removeFrom(document.body);
+      });
+
+      dialog.attachTo(document.body);
+    });
   }
 }
 
@@ -48,22 +49,28 @@ new App(document.querySelector('.document')! as HTMLElement);
 /*
 Q.
 
-intersection 부분 질문있습니당.
-
-안녕하세요 엘리쌤~
-
-7:08초에
-page : Composable & Comonent 부분을 강의를 듣기 전에
-Composable | Component로 작성했는데 이렇게 작성하니 에러가 발생하더라구요.
-
-this.page = new PageComponent()
-this.page.attachTo(appRoot) 를 하면
-'Composable' 형식에 'attachTo' 속성이 없습니다' 라는 에러가 발생하는데,
-PageComponent는 BaseComponent를 상속받았기 때문에  attachTo와 addChild 모두 갖고 있기 때문에 사용할 수 있을 줄 알았는데 왜 에러가 나는지 궁금합니다..!
+실무에선 어떤식으로 TS가 쓰이고 있는지 궁금합니다 ㅎㅎㅎ!!!
 
 
 A.
-Page는 Composable 하면서 (Composable 인터페이스에 있는 모든 함수들을 사용할 수 있으면서) 또 Component 이기도 하죠? 그래서 이것도 맞고! 그리고 저것도! 라는 개념은 intersection & 를 쓰셔야 해요 😆
+실무라고 하더라도 어떤 프로젝트를 하냐에 따라서 쓰임새가 다를 것 같아요 :) 
 
-유니온 타입 | 이거는: 이거 이거나 또는 저거! 둘장에 하나! 일때 사용하는거랍니다.
+정말 심플하고 정적인 웹사이트 수준이라면 리액트에서 제공하는 클래스 또는 함수형 컴포넌트만 이용해서
+Props & States 들의 인자와 또 함수들에 타입을 정해주는 정도로 제한적으로 사용할 것 같구요.
+
+
+프론트엔드에 조금더 복잡한 로직이 들어 있고, 동적인 요소들이 많다면, 지금 우리가 이번 프로젝트에서 사용하는 것처럼,
+다양한 로직들을 클래스로 묶어서 상속과 다양한 디자인 패턴들을 이용해서 프로그램을 만들어 나가겠죠? :)
+
+
+리액트에서 보셨겠지만 youtube나 firebase를 쓸때 우리가 그냥 컴포넌트에서 모든 로직을 처리 하는것이 아니라, 
+컴포넌트 UI 는 최대한 UI를 보여주는 것들만 하게 (최대한 멍청하게 만들어 놓곸ㅋ) 서비스에 관련된 로직은 별도로 클래스를 만들어 둔것처럼 타입스크립트로도 그렇게 해요 :)
+
+
+제가 일하는 곳은 사용자가 디자인을 만들수 있는 프론트엔드 단에서 꽤 많은 로직과 처리 해야 하는 것들이 많기 때문에 
+객체지향과 함수형 그리고 꽤 다양한 디자인 패턴을 이용해서 아키텍쳐가 만들어져 있어요 🙆‍♀️
+
+
+
+다음에 기회가 되면 리액트 + 타입스크립트 한번 만들어 볼께요~ :)
 */
