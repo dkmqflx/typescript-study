@@ -6,15 +6,12 @@ export class VideoComponent extends BaseComponent<HTMLElement> {
       `<section class="video">
         <div class="video__player">
         <iframe class="video__iframe"></iframe>
-        <h3 class="video__title"></h3>
-        </div>
+        <h3 class="page-item__title video__title"></h3>        </div>
       </section>
     `
     );
 
-    const iframe = this.element.querySelector(
-      '.video__iframe'
-    )! as HTMLIFrameElement;
+    const iframe = this.element.querySelector('.video__iframe')! as HTMLIFrameElement;
     iframe.src = this.convertToEmbeddedURl(url);
 
     /*
@@ -30,9 +27,7 @@ export class VideoComponent extends BaseComponent<HTMLElement> {
     다양한 형태의 url을 받았을 때 id를 추출해서 embed url을 만들어주어야 한다
     */
 
-    const titleElement = this.element.querySelector(
-      '.video__title'
-    )! as HTMLHeadingElement;
+    const titleElement = this.element.querySelector('.video__title')! as HTMLHeadingElement;
 
     titleElement.textContent = title;
   }
