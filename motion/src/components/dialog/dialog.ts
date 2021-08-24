@@ -21,9 +21,6 @@ export class InputDialog extends BaseComponent<HTMLElement> implements Composabl
     );
     const closeBtn = this.element.querySelector('.close')! as HTMLElement;
 
-    // 항상 이벤트는 내부적으로 처리하는 것이 아니라, 리스너를 외부에서 주입 받아서
-    // 등록된 리스너가 있다면 그것을 호출해주는 방식으로 해야 한다
-
     closeBtn.onclick = () => {
       this.closeListener && this.closeListener();
     };
@@ -32,20 +29,6 @@ export class InputDialog extends BaseComponent<HTMLElement> implements Composabl
     submitBtn.onclick = () => {
       this.submitListener && this.submitListener();
     };
-
-    /*
-    closeBtn.addEventListern('click', '')
-    보통은 close 버튼의 adddEventListner를 등록해서 사용하는 것이 좋다 
-    우리가 close 버튼에 다른 것이 이벤트가 등록이 되면 
-    다른 곳에서 다른 이벤트 리스너를 계속 등록할 수 있고, 다수의 이벤트가 등록되어져 있으면 
-    드록된 순서대로 콜백함수가 호출이 된다 
-
-    onclick에 이렇게 할당하는 것은 기존에 다른 리스너가 등록되어져 있으면
-    그것을 덮어 씌우는 그런 효과가 있다 
-
-    따라서 내가 이 컴포넌트 안에서 등록하는 곳이 한군데라면 onclick을 할당하는 것이 괜찮지만
-    만약에 버튼을 다른 곳에서도 사용한다면 onclick 보다는 addEventLister를 사용해서 처리하는 것이 더 좋다 
-    */
   }
 
   setOnCloseListener(listener: OnCloseListener) {
@@ -61,3 +44,55 @@ export class InputDialog extends BaseComponent<HTMLElement> implements Composabl
     child.attachTo(body);
   }
 }
+
+/*
+Q. 버튼 이벤트 리스너 연결할 때 콜백 받는 이유
+
+안녕하세요 선생님! 강의 너무 재밌게 잘 보고 있습니다. 🥰
+
+이벤트 등록시키는 부분에서 궁금한 부분이 있어서 질문드리게 됐습니다.
+
+dialog 클래스에서 닫기 버튼과 등록 버튼을 각각 외부에서 받아온 listener를  dialog 클래스 
+내부의 이벤트 리스너에 등록시키는 방식으로 이벤트를 연결하셨는데 이렇게 코드를 짜면 
+어떤 부분이 좋은 건지 궁금합니다.
+
+혼자 생각해본 이유들로는...
+
+콜백 함수를 사용하면 웹 API의 콜백큐를 이용해  해당 함수 실행을 할 수 있어서 웹브라우저를 
+조금 더 부드럽게 동작시킬 수 있다는 장점을 가져가기 위함인지
+
+아니면 attachTo, removeFrom과 같이 컴포넌트 클래스라면 모두 사용하는 
+공통적인 메세드의 중복을 피하게 위함인지 
+
+아니면 제가 생각하지 못한 다른 이유가 있는 것이 있는지 궁금합니다 ㅜㅜ 
+이런식으로 코드를 짜본 적이 없어서 힘들게 따라가고 있지만 많이 배우게 해주셔서 감사해요
+
+
+A.
+너무 좋은 질문 이예요 👍
+
+지금 AddPopup 클래스는 어떤 일을 하는 아이인가요?
+
+사용자에게 입력을 받을 입력 폼을 보여주고, 입력을 완료하는 버튼 하나와 
+그리고 취소하는 클로즈 버튼 하나가 있죠?
+
+즉, 사용자에게 우리가 필요한 데이터를 받아와서 입력을 완료 하거나, 
+취소 둘중에 하나를 할 수 있는 클래스예요. 어떤 데이터가 필요한지, 
+버튼이 클릭되면 어떤 일들을 해야 하는지, 취소 버튼이 클릭 되면 
+어떻게 되어야 하는지는 외부에서 콜백함수로 받기 때문에, 
+이 AddPopup 완전히 유연하고! 재사용성이 짱 높은 클래스죠 :)
+
+페이지에서뿐 아니라, 나중에 사용자에게 데이터를 받을 일이 있다면 
+이 AddPopup 클래스를 이용 할 수 있어요. 중요한 메인 로직은 콜백함수로 받아오기 때문이죠! :)
+
+결론: 콜백함수는 함수나, 클래스의 재사용성을 높여줍니다 :)
+
+
+예를 들어 setTimeout(callback, time) 같은 WebApi도 주된 기능은, 
+전달된 특정한 시간이 지나면 우리가 전달한 콜백함수를 호출하는 타이머 같은 아이죠?
+
+그래서 어떤 경우에는 특정한 시간이 지나서 무언가를 수행해야 한다면 이 setTimeout을 이용할 수 있죠.  
+만약 이 setTimeout이 특정한 시간이 지나면 자체적으로 콘솔에 로그를 출력하기만 하는 함수라면 
+재사용성이 완전 떨어지겠죠? 🤣
+
+*/
