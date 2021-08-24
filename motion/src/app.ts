@@ -6,128 +6,79 @@ import { NoteComponent } from './components/page/item/note.js';
 import { ImageComponent } from './components/page/item/image.js';
 import { Composable, PageComponent, PageItemComponent } from './components/page/page.js';
 import { VideoComponent } from './components/page/item/video.js';
-import { InputDialog } from './components/dialog/dialog.js';
+import { InputDialog, MediaData, TextData } from './components/dialog/dialog.js';
+
+type InputComponentConstructor<T extends (MediaData | TextData) & Component> = {
+  new (): T;
+  // MediaSectionInput 또는 TextSectionInput을 만드는 타입이 된다
+};
 
 class App {
   private readonly page: Component & Composable;
 
-  constructor(appRoot: HTMLElement, dialogRoot: HTMLElement) {
+  constructor(appRoot: HTMLElement, private dialogRoot: HTMLElement) {
     this.page = new PageComponent(PageItemComponent);
     this.page.attachTo(appRoot);
 
-    // const image = new ImageComponent('Image Title', 'https://picsum.photos/600/300');
-    // this.page.addChild(image);
+    this.bindElementToDialog<MediaSectionInput>(
+      '#new-image',
+      MediaSectionInput,
+      (input: MediaSectionInput) => new ImageComponent(input.title, input.url)
+    );
 
-    // const note = new NoteComponent('Note Title', 'Note body');
-    // this.page.addChild(note);
+    this.bindElementToDialog<MediaSectionInput>(
+      '#new-video',
+      MediaSectionInput,
+      (input: MediaSectionInput) => new VideoComponent(input.title, input.url)
+    );
 
-    // const todo = new TodoComponent('Todo Title', 'Todo Item');
-    // this.page.addChild(todo);
+    this.bindElementToDialog<TextSectionInput>(
+      '#new-note',
+      TextSectionInput,
+      (input: TextSectionInput) => new NoteComponent(input.title, input.body)
+    );
 
-    // const video = new VideoComponent('Vidoe Title', 'https://youtu.be/8AqRRtUA7ko');
-    // this.page.addChild(video);
+    this.bindElementToDialog<TextSectionInput>(
+      '#new-todo',
+      TextSectionInput,
+      (input: TextSectionInput) => new TodoComponent(input.title, input.body)
+    );
+  }
 
-    const imageBtn = document.querySelector('#new-image')! as HTMLButtonElement;
-    imageBtn.addEventListener('click', () => {
+  // 반복적으로 쓰이는 것 있다면 함수로 만들어준다
+  // 그리고 차이나는 부분을 인자로 받아온다
+
+  // private bindElementToDialog<T extends MediaSectionInput | TextSectionInput
+  // MediaSectionInput | TextSectionInput 다 쓰고 있는데 커플링이 되어있다는 것이 문제
+  // Media 관련 데이터(title, url 이외)를 가지고 있는 다른 인풋을 만들고 싶다면
+  // MediaSectionInput에서 수정을 해야한다. 확장성이 떨어진다
+
+  // 아래처럼하면 다양한 Media 또는 Text data를 구현하는 것들을 받을 수 있다
+  private bindElementToDialog<T extends (MediaData | TextData) & Component>(
+    selector: string,
+    InputComponent: InputComponentConstructor<T>,
+    makeSection: (input: T) => Component
+    //  MediaSectionInput | TextSectionInput 을 인자로 받아서 컴포넌트를 만드는 함수
+  ) {
+    const element = document.querySelector(selector)! as HTMLButtonElement;
+    element.addEventListener('click', () => {
       const dialog = new InputDialog();
-      const inputSection = new MediaSectionInput();
-      dialog.addChild(inputSection);
-      dialog.attachTo(dialogRoot);
+      const input = new InputComponent();
+
+      dialog.addChild(input);
+      dialog.attachTo(this.dialogRoot);
 
       dialog.setOnCloseListener(() => {
-        dialog.removeFrom(dialogRoot);
+        dialog.removeFrom(this.dialogRoot);
       });
 
       dialog.setOnSubmitListener(() => {
-        const image = new ImageComponent(inputSection.title, inputSection.url);
+        const image = makeSection(input);
         this.page.addChild(image);
-        dialog.removeFrom(dialogRoot);
-      });
-    });
-
-    const videoBtn = document.querySelector('#new-video')! as HTMLButtonElement;
-    videoBtn.addEventListener('click', () => {
-      const dialog = new InputDialog();
-      const inputSection = new MediaSectionInput();
-      dialog.addChild(inputSection);
-      dialog.attachTo(dialogRoot);
-
-      dialog.setOnCloseListener(() => {
-        dialog.removeFrom(dialogRoot);
-      });
-
-      dialog.setOnSubmitListener(() => {
-        const image = new VideoComponent(inputSection.title, inputSection.url);
-        this.page.addChild(image);
-        dialog.removeFrom(dialogRoot);
-      });
-    });
-
-    const noteBtn = document.querySelector('#new-note')! as HTMLButtonElement;
-    noteBtn.addEventListener('click', () => {
-      const dialog = new InputDialog();
-      const inputSection = new TextSectionInput();
-      dialog.addChild(inputSection);
-      dialog.attachTo(dialogRoot);
-
-      dialog.setOnCloseListener(() => {
-        dialog.removeFrom(dialogRoot);
-      });
-
-      dialog.setOnSubmitListener(() => {
-        const image = new NoteComponent(inputSection.title, inputSection.body);
-        this.page.addChild(image);
-        dialog.removeFrom(dialogRoot);
-      });
-    });
-
-    const todoBtn = document.querySelector('#new-todo')! as HTMLButtonElement;
-    todoBtn.addEventListener('click', () => {
-      const dialog = new InputDialog();
-      const inputSection = new TextSectionInput();
-      dialog.addChild(inputSection);
-      dialog.attachTo(dialogRoot);
-
-      dialog.setOnCloseListener(() => {
-        dialog.removeFrom(dialogRoot);
-      });
-
-      dialog.setOnSubmitListener(() => {
-        const image = new TodoComponent(inputSection.title, inputSection.body);
-        this.page.addChild(image);
-        dialog.removeFrom(dialogRoot);
+        dialog.removeFrom(this.dialogRoot);
       });
     });
   }
 }
 
 new App(document.querySelector('.document')! as HTMLElement, document.body);
-
-/*
-Q.
-
-실무에선 어떤식으로 TS가 쓰이고 있는지 궁금합니다 ㅎㅎㅎ!!!
-
-
-A.
-실무라고 하더라도 어떤 프로젝트를 하냐에 따라서 쓰임새가 다를 것 같아요 :) 
-
-정말 심플하고 정적인 웹사이트 수준이라면 리액트에서 제공하는 클래스 또는 함수형 컴포넌트만 이용해서
-Props & States 들의 인자와 또 함수들에 타입을 정해주는 정도로 제한적으로 사용할 것 같구요.
-
-
-프론트엔드에 조금더 복잡한 로직이 들어 있고, 동적인 요소들이 많다면, 지금 우리가 이번 프로젝트에서 사용하는 것처럼,
-다양한 로직들을 클래스로 묶어서 상속과 다양한 디자인 패턴들을 이용해서 프로그램을 만들어 나가겠죠? :)
-
-
-리액트에서 보셨겠지만 youtube나 firebase를 쓸때 우리가 그냥 컴포넌트에서 모든 로직을 처리 하는것이 아니라, 
-컴포넌트 UI 는 최대한 UI를 보여주는 것들만 하게 (최대한 멍청하게 만들어 놓곸ㅋ) 서비스에 관련된 로직은 별도로 클래스를 만들어 둔것처럼 타입스크립트로도 그렇게 해요 :)
-
-
-제가 일하는 곳은 사용자가 디자인을 만들수 있는 프론트엔드 단에서 꽤 많은 로직과 처리 해야 하는 것들이 많기 때문에 
-객체지향과 함수형 그리고 꽤 다양한 디자인 패턴을 이용해서 아키텍쳐가 만들어져 있어요 🙆‍♀️
-
-
-
-다음에 기회가 되면 리액트 + 타입스크립트 한번 만들어 볼께요~ :)
-*/
