@@ -43,6 +43,15 @@ class App {
       TextSectionInput,
       (input: TextSectionInput) => new TodoComponent(input.title, input.body)
     );
+
+    this.page.addChild(new ImageComponent('Image Title', 'https://picsum.photos/800/400'));
+    this.page.addChild(new VideoComponent('Video Title', 'https://youtu.be/D7cwvvA7cP0'));
+    this.page.addChild(new NoteComponent('Note Title', "Don't forget to code your dream"));
+    this.page.addChild(new TodoComponent('Todo Title', 'TypeScript Course!'));
+    this.page.addChild(new ImageComponent('Image Title', 'https://picsum.photos/800/400'));
+    this.page.addChild(new VideoComponent('Video Title', 'https://youtu.be/D7cwvvA7cP0'));
+    this.page.addChild(new NoteComponent('Note Title', "Don't forget to code your dream"));
+    this.page.addChild(new TodoComponent('Todo Title', 'TypeScript Course!'));
   }
 
   // 반복적으로 쓰이는 것 있다면 함수로 만들어준다
@@ -54,6 +63,7 @@ class App {
   // MediaSectionInput에서 수정을 해야한다. 확장성이 떨어진다
 
   // 아래처럼하면 다양한 Media 또는 Text data를 구현하는 것들을 받을 수 있다
+
   private bindElementToDialog<T extends (MediaData | TextData) & Component>(
     selector: string,
     InputComponent: InputComponentConstructor<T>,

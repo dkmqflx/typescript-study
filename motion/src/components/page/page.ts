@@ -25,7 +25,7 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
   constructor() {
     super(
       `
-      <li class="page-item">
+      <li draggable="true" class="page-item">
         <section class="page-item__body">
         </section>
         <div class="page-item__controls">
@@ -39,6 +39,22 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
     closeBtn.onclick = () => {
       this.closeListner && this.closeListner();
     };
+
+    this.element.addEventListener('dragstart', (event: DragEvent) => {
+      this.onDragStart(event);
+    });
+
+    this.element.addEventListener('dragend', (event: DragEvent) => {
+      this.onDragEnd(event);
+    });
+  }
+
+  onDragStart(event: DragEvent) {
+    console.log('dragStart', event);
+  }
+
+  onDragEnd(event: DragEvent) {
+    console.log('dragEnd', event);
   }
 
   addChild(child: Component) {
@@ -56,7 +72,29 @@ export class PageComponent extends BaseComponent<HTMLUListElement> implements Co
   constructor(private pageItemConstructor: SectionContainerConstructor) {
     // 부모 클래스의 생성사 호출할 때 super 사용한다
     super('<ul class="page"></ul>');
+
+    // drag 한 요소가 내 위로 올라왔을 때
+    this.element.addEventListener('dragover', (event: DragEvent) => {
+      this.onDragOver(event);
+    });
+
+    this.element.addEventListener('drop', (event: DragEvent) => {
+      this.onDrop(event);
+    });
   }
+
+  onDragOver(event: DragEvent) {
+    // https://developer.mozilla.org/ko/docs/Web/API/HTML_Drag_and_Drop_API
+    // preventDefault 해주는 부분, 드롭 지역 정의하기 참고
+    event.preventDefault();
+    console.log('dragover', event);
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    console.log('drop', event);
+  }
+
   addChild(section: Component) {
     // const item = new PageItemComponent();
     // 현재 PageComponent는 PageItemComponent라는 하나의 UI 밖에 만들지 못한다
