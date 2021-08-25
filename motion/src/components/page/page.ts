@@ -7,10 +7,18 @@ export interface Composable {
 // 각각의 vidoe, note 같은 이런 섹션들을 감쌀 수 있는 컨테이너는 무조건 Component와 Composable 인터페이스를 구현한다
 interface SectionContainer extends Component, Composable {
   setOnCloseListener(listener: OnCloseListener): void;
+  setOnDragStateListener(listener: OnDragStateListenr<SectionContainer>): void;
 }
 
-// 아무런 인자를 전달받지도 리턴하지도 않는다
 type OnCloseListener = () => void;
+
+type DragState = 'start' | 'stop' | 'enter' | 'leave';
+// drag해서 요소를 start, stop할 수 있다
+// 그리고 다른 요소 입장에서는 drag한 요소가, 내 위에 enter, leave될 수 있다
+type OnDragStateListenr<T extends Component> = (target: T, state: DragState) => void;
+// target을 pageItemComponent라고 하면 해당 컴포넌트 밖에 사용하지 못하고
+// Component라고 하면 PageItemComponent 서브타입을 전달하는 순간 타입의 정보 사라진다
+// 따라서 타입이 안전하지만 보존되는 제네릭 사용한다
 
 type SectionContainerConstructor = {
   new (): SectionContainer;
@@ -21,7 +29,8 @@ type SectionContainerConstructor = {
 
 export class PageItemComponent extends BaseComponent<HTMLElement> implements SectionContainer {
   private closeListner?: OnCloseListener;
-  // 외부로 부터 전달받은 콜백함수를 저장하는 변수
+  private dragStateListener?: OnDragStateListenr<PageItemComponent>;
+
   constructor() {
     super(
       `
@@ -47,14 +56,34 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
     this.element.addEventListener('dragend', (event: DragEvent) => {
       this.onDragEnd(event);
     });
+
+    this.element.addEventListener('dragenter', (event: DragEvent) => {
+      this.onDragEnter(event);
+    });
+
+    this.element.addEventListener('dragleave', (event: DragEvent) => {
+      this.onDragLeave(event);
+    });
   }
 
-  onDragStart(event: DragEvent) {
-    console.log('dragStart', event);
+  onDragStart(_: DragEvent) {
+    this.notifyDragObservers('start');
   }
 
-  onDragEnd(event: DragEvent) {
-    console.log('dragEnd', event);
+  onDragEnd(_: DragEvent) {
+    this.notifyDragObservers('stop');
+  }
+
+  onDragEnter(_: DragEvent) {
+    this.notifyDragObservers('enter');
+  }
+
+  onDragLeave(_: DragEvent) {
+    this.notifyDragObservers('leave');
+  }
+
+  notifyDragObservers(state: DragState) {
+    this.dragStateListener && this.dragStateListener(this, state);
   }
 
   addChild(child: Component) {
@@ -65,6 +94,11 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
   // close listener를 등록한다
   setOnCloseListener(listener: OnCloseListener) {
     this.closeListner = listener;
+  }
+
+  setOnDragStateListener(listener: OnDragStateListenr<PageItemComponent>) {
+    //내가 드래그가 되고 있다, 내가 누군지, 드래그가 되고 있는 상태를 알려준다
+    this.dragStateListener = listener;
   }
 }
 export class PageComponent extends BaseComponent<HTMLUListElement> implements Composable {
@@ -96,18 +130,14 @@ export class PageComponent extends BaseComponent<HTMLUListElement> implements Co
   }
 
   addChild(section: Component) {
-    // const item = new PageItemComponent();
-    // 현재 PageComponent는 PageItemComponent라는 하나의 UI 밖에 만들지 못한다
-    // 하지만 나중에 사용자가 다크도드, 라이트 모드 쓸지 결정할 수 있다
-    // 이를 어떠한 타임의 PageItemComponent를 만들건지 DI를 사용해서 해결할 수 있다
-    // 나중에 다른 타입의 PageItemComponent를 전달해줄 수 있다
-
     const item = new this.pageItemConstructor();
-    // 내부에서 클래스를 만드는 것이 아니라 외부에서 전달된 pageItemConstructor를 사용해서 클래스를 만든다
 
     item.addChild(section);
     item.attachTo(this.element, 'beforeend');
     item.setOnCloseListener(() => item.removeFrom(this.element));
+    item.setOnDragStateListener((target: SectionContainer, state: DragState) => {
+      console.log(target, state);
+    });
   }
 }
 
