@@ -9,6 +9,7 @@ interface SectionContainer extends Component, Composable {
   setOnCloseListener(listener: OnCloseListener): void;
   setOnDragStateListener(listener: OnDragStateListenr<SectionContainer>): void;
   muteChildren(state: 'mute' | 'unmute'): void;
+  getBoundingRect(): DOMRect;
 }
 
 type OnCloseListener = () => void;
@@ -23,10 +24,12 @@ type OnDragStateListenr<T extends Component> = (target: T, state: DragState) => 
 
 type SectionContainerConstructor = {
   new (): SectionContainer;
-  // 생성자를 정의하는 타입
-  // 아무 것도 전달받지 않는 생성자인데
-  // 생성자를 호출하면 SectionContainer 인터페이스를 규격하는 어떤 클래스라도 괜찮다
 };
+
+// beforebegin을ㅇ 사용해서 drop target 윗부분에 추가하기 때문에 ,
+// 아래에서 위로 drag 할 때, drop over 요소 중간에서 놓아도 순서가 바뀌지만
+// 위에서 아래 drag 할 때, drop over 요소 중간에 놓아도 순서가 바뀌지 않는다
+// 해당 문제를 해결해야 한다
 
 export class PageItemComponent extends BaseComponent<HTMLElement> implements SectionContainer {
   private closeListner?: OnCloseListener;
@@ -109,6 +112,10 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
       this.element.classList.remove('mute-children');
     }
   }
+
+  getBoundingRect(): DOMRect {
+    return this.element.getBoundingClientRect();
+  }
 }
 export class PageComponent extends BaseComponent<HTMLUListElement> implements Composable {
   // children은 가지고 있는 모든 자식 요소들에 대해서 알고있다
@@ -150,11 +157,15 @@ export class PageComponent extends BaseComponent<HTMLUListElement> implements Co
 
     // 지금 drag하고 있는 것과 drop target이 다르다면
     if (this.dragTarget && this.dragTarget !== this.dropTarget) {
+      const dropY = event.clientY;
+      const srcElement = this.dragTarget.getBoundingRect();
+
       // drag하고 있는 것을 현재 페이지에서 삭제한다
       this.dragTarget.removeFrom(this.element);
 
-      // drop target 앞부분에 추가해준다 (형제요소로써 이전에 추가된다)
-      this.dropTarget.attach(this.dragTarget, 'beforebegin');
+      // drop 하는 위치에 따라, 아래에서 위로 올릴 때는 drop 요소 위에
+      // 위에서 아래로 drop 하면 drop 요소 아래에 위치한다
+      this.dropTarget.attach(this.dragTarget, dropY < srcElement.y ? 'beforebegin' : 'afterend');
     }
   }
 
