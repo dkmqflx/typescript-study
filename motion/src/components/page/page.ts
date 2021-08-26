@@ -10,6 +10,7 @@ interface SectionContainer extends Component, Composable {
   setOnDragStateListener(listener: OnDragStateListenr<SectionContainer>): void;
   muteChildren(state: 'mute' | 'unmute'): void;
   getBoundingRect(): DOMRect;
+  onDropped(): void;
 }
 
 type OnCloseListener = () => void;
@@ -72,18 +73,26 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
 
   onDragStart(_: DragEvent) {
     this.notifyDragObservers('start');
+    this.element.classList.add('lifted');
   }
 
   onDragEnd(_: DragEvent) {
     this.notifyDragObservers('stop');
+    this.element.classList.remove('lifted');
   }
 
   onDragEnter(_: DragEvent) {
     this.notifyDragObservers('enter');
+    this.element.classList.add('drop-area');
   }
 
   onDragLeave(_: DragEvent) {
     this.notifyDragObservers('leave');
+    this.element.classList.remove('drop-area');
+  }
+
+  onDropped() {
+    this.element.classList.remove('drop-area');
   }
 
   notifyDragObservers(state: DragState) {
@@ -146,10 +155,8 @@ export class PageComponent extends BaseComponent<HTMLUListElement> implements Co
 
   onDrop(event: DragEvent) {
     event.preventDefault();
-    console.log('drop', event);
 
     // 여기에서 위치를 바꿔주면 된다
-    console.log('this dropTarget', this.dropTarget);
     if (!this.dropTarget) {
       // drop할 곳 없는 경우
       return;
@@ -167,6 +174,9 @@ export class PageComponent extends BaseComponent<HTMLUListElement> implements Co
       // 위에서 아래로 drop 하면 drop 요소 아래에 위치한다
       this.dropTarget.attach(this.dragTarget, dropY < srcElement.y ? 'beforebegin' : 'afterend');
     }
+
+    // drop이 끝나면
+    this.dropTarget.onDropped();
   }
 
   addChild(section: Component) {
