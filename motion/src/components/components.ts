@@ -7,21 +7,10 @@ Interface를 쓰는 것이 좋다
 export interface Component {
   attachTo(parent: HTMLElement, position?: InsertPosition): void;
   removeFrom(parent: HTMLElement): void;
+  // 전달받은 컴포넌트를 나 자신 안에다가 붙여주는 역할 한다
+  attach(component: Component, position?: InsertPosition): void;
 }
 
-/*
-* Encapsulate the HTML element creation
-BaseComponent는 HTMLElement를 만드는 것을 Encapsulate 한다 
-그래서 외부에서는 우리가 어떻게 HTMLElement를 만드는지 상관하지 않고
-string type의 element를 전달해주기만 하면 된다
-
-element라고 하는 클래스 멤버 변수는 protected readonly 키워드를 가지고 있죠?
-
-오직 상속하는 클래스에서만 접근이 가능하고(이때, 읽기만 가능함), 외부에서는 접근이 불가능해요. 
-생성자에 문자열 형태의 HTML만 전달 받으면 내부적으로 외부에서는 보이지 않는 element라는 요소를 생성하므로 
-캡슐화되었다고 볼 수 있어요.
-
-*/
 export class BaseComponent<T extends HTMLElement> implements Component {
   protected readonly element: T;
   // 요소 안의 상태들은 변경이 가능하지만, 요소 자체를 다른 것으로 변경하는 것은 안된다
@@ -40,6 +29,10 @@ export class BaseComponent<T extends HTMLElement> implements Component {
       throw new Error('Parent mismatch');
     }
     parent.removeChild(this.element);
+  }
+
+  attach(component: Component, position?: InsertPosition) {
+    component.attachTo(this.element, position);
   }
 }
 

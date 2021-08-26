@@ -249,3 +249,10 @@ textarea {
   padding: 1em;
   color: var(--smokywhite);
 }
+
+/* Drag and Drop */
+
+/* mute children 안의 모든 클래스는, pointer-events, 썩 좋은 방법은 아니다 */
+.mute-children * {
+  pointer-events: none;
+}
