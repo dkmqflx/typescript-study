@@ -1,11 +1,12 @@
 import { BaseComponent, Component } from './../components.js';
+import { Hoverable, Droppable, Draggable } from '../../common/type';
+import { EnableDragging, EnableDrop, EnableHover } from '../../decorators/draggable.js';
 
 export interface Composable {
   addChild(child: Component): void;
 }
 
-// 각각의 vidoe, note 같은 이런 섹션들을 감쌀 수 있는 컨테이너는 무조건 Component와 Composable 인터페이스를 구현한다
-interface SectionContainer extends Component, Composable {
+interface SectionContainer extends Component, Composable, Draggable, Hoverable {
   setOnCloseListener(listener: OnCloseListener): void;
   setOnDragStateListener(listener: OnDragStateListenr<SectionContainer>): void;
   muteChildren(state: 'mute' | 'unmute'): void;
@@ -32,6 +33,8 @@ type SectionContainerConstructor = {
 // 위에서 아래 drag 할 때, drop over 요소 중간에 놓아도 순서가 바뀌지 않는다
 // 해당 문제를 해결해야 한다
 
+@EnableDragging
+@EnableHover
 export class PageItemComponent extends BaseComponent<HTMLElement> implements SectionContainer {
   private closeListner?: OnCloseListener;
   private dragStateListener?: OnDragStateListenr<PageItemComponent>;
@@ -53,22 +56,6 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
     closeBtn.onclick = () => {
       this.closeListner && this.closeListner();
     };
-
-    this.element.addEventListener('dragstart', (event: DragEvent) => {
-      this.onDragStart(event);
-    });
-
-    this.element.addEventListener('dragend', (event: DragEvent) => {
-      this.onDragEnd(event);
-    });
-
-    this.element.addEventListener('dragenter', (event: DragEvent) => {
-      this.onDragEnter(event);
-    });
-
-    this.element.addEventListener('dragleave', (event: DragEvent) => {
-      this.onDragLeave(event);
-    });
   }
 
   onDragStart(_: DragEvent) {
@@ -126,7 +113,9 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
     return this.element.getBoundingClientRect();
   }
 }
-export class PageComponent extends BaseComponent<HTMLUListElement> implements Composable {
+
+@EnableDrop
+export class PageComponent extends BaseComponent<HTMLUListElement> implements Composable, Droppable {
   // children은 가지고 있는 모든 자식 요소들에 대해서 알고있다
   private children = new Set<SectionContainer>(); // Set은 중복된 요소 가지지 않는다
   private dragTarget?: SectionContainer;
@@ -135,27 +124,11 @@ export class PageComponent extends BaseComponent<HTMLUListElement> implements Co
   constructor(private pageItemConstructor: SectionContainerConstructor) {
     // 부모 클래스의 생성사 호출할 때 super 사용한다
     super('<ul class="page"></ul>');
-
-    // drag 한 요소가 내 위로 올라왔을 때
-    this.element.addEventListener('dragover', (event: DragEvent) => {
-      this.onDragOver(event);
-    });
-
-    this.element.addEventListener('drop', (event: DragEvent) => {
-      this.onDrop(event);
-    });
   }
 
-  onDragOver(event: DragEvent) {
-    // https://developer.mozilla.org/ko/docs/Web/API/HTML_Drag_and_Drop_API
-    // preventDefault 해주는 부분, 드롭 지역 정의하기 참고
-    event.preventDefault();
-    // console.log('dragover', event);
-  }
+  onDragOver(_: DragEvent): void {}
 
   onDrop(event: DragEvent) {
-    event.preventDefault();
-
     // 여기에서 위치를 바꿔주면 된다
     if (!this.dropTarget) {
       // drop할 곳 없는 경우
