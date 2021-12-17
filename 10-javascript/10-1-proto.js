@@ -10,6 +10,20 @@ TS에서 작성하는 클래스나 인터페이스도 컴파일러를 이용해�
 클래스에서 속성과 함수를 정의한 것 처럼 
 마찬가지로 동일하게 반복적으로 쓸 수 있도록 속성과 함수들을 정의하는 것 
 
+Prototype-based Programming이란 
+
+a style of OOP
+객체지향 프로그래밍을 할 수 있는 한 가지의 방식으로서 
+
+behavior reuse (inheritance)
+
+by reusing existing objects
+
+프로토타입을 기반으로한 프로그래밍언어라는 것은 
+바로 행동들을 재사용할 수 있고, 기존에 있는 오브젝트를 재사용할 수 있는 것인데 
+
+that serve as prototype
+그것을 바로 프로토타입을 이용해서 하는 것이다
 */
 
 const x = {};
@@ -43,7 +57,7 @@ function CoffeeMachine1(beans) {
   // 아래처럼 함수를 정의하면 만들어지는 모든 인스턴스마다 포함된다
 
   this.makeCoffee = (shots) => {
-    console.log("making...");
+    console.log('making...');
   };
 }
 
@@ -64,7 +78,7 @@ function CoffeeMachine(beans) {
 }
 
 CoffeeMachine.prototype.makeCoffee = (shots) => {
-  console.log("making2...");
+  console.log('making2...');
 };
 const machine = new CoffeeMachine(10);
 const machine2 = new CoffeeMachine(20);
