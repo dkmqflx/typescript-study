@@ -18,15 +18,16 @@
 
 // 하지만 모듈화 한 다음에 두 파일에 동일한 add 함수 정의되어 있는 경우
 // add 함수 호출하면 에러가 발생한다
+// 따라서 export 라는 키워드를 통해서 이 모듈을 import해서 사용할 것이라는 것을 명시해주어야 한다
 
 // default 경우 괄호 없이 사용할 수 있지만, default 인경우 {}와 함께 함수이름 적어준다
 // 다른이름으로 변경하고 싶은 경우 아래처럼 as 사용한다
-import add, { print as printMessage } from "./10-3-module1.js";
+import add, { print as printMessage } from './10-3-module1.js';
 
 // import sum from './10-3-module1.js'
 // default로 export 한 경우에는 아래처럼 sum 처럼 아무 이름으로 받아올 수 있다
 // default로 add를 받아오는데 이 add를 sum으로 사용한다
-import sum from "./10-3-module1.js";
+import sum from './10-3-module1.js';
 
 console.log(add(1, 2));
 printMessage();
