@@ -4,10 +4,11 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
     /* Basic Options */
-    // "incremental": true,                   /* Enable incremental compilation , 이전 컴파일 파일과 비교해서 수정된 사항이 없다면 그 부분을 유지하고 수정된 부분만 컴파일, 컴파일 더 빨라질 수 있으나 이전 컴파일 파일 보관하니까 용량 차지한다*/
+    // "incremental": true,                   /* Enable incremental compilation , 이전 컴파일 파일과 비교해서 수정된 사항이 없다면 그 부분을 유지하고 수정된 부분만 컴파일, 컴파일 더 빨라질 수 있으나 이전 컴파일 파일 보관하니까 디스크 용량 차지한다*/
     "target": "ES5" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
+    /* 무조건 낮은 버전 선택하는 것 좋지 않다. 예를 들어, 프로미스, 또는 인터페이스 같은 것들을 구현하기 위해서 더 더러운 코드가 많이 생기기 때문이다. 따라서 꼭 필요한 버전으로 설정해준다. 보통 ES5나 ES6로 많이 한다  */ /* 그리고 ES5 target으로 하게 되면 ts 파일에서 ECMA script에서 기본적으로 제공하는 document. 를 통해 document에 대한 정보를 얻을 수 있고, querySelector 같은 것들도 사용할 수 있다 */
     "module": "commonjs",
-    /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */ /* 컴파일 될 때 모듈을 어떻게 구현할지 결정할 수 있다, 노드 프로젝트라면 CommonJS를브라우저 환경이라면 ECMA Script 표준 안에 맞는 것을 선택하는 것이 좋다*/
+    /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */ /* 컴파일 될 때 모듈을 어떻게 구현할지 결정할 수 있다, 노드 프로젝트라면 CommonJS를, 브라우저 환경이라면 ECMA Script 표준 안에 맞는 것을 선택하는 것이 좋다*/
     // "lib": [],                             /* Specify library files to be included in the compilation. 어떤 라이브러리를 선택할지 세부적으로 정해준다, 보통은 따로 선택하지 않고 target 선택하면 따라나오는 것 쓴다*/
     // "allowJs": true,                       /* Allow javascript files to be compiled. 프로젝트에서 js와 ts를 같이 쓸 건지 */
     // "checkJs": true,                       /* Report errors in .js files. js 파일 안에 무엇인가 잘못하고 있다면 에러 뜰 수 있도록 한다, js와 ts 모두 쓴다면 allowJS, checkJS 모두 true로 해준다*/
@@ -40,7 +41,7 @@
     // "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). 각각의 파일을 다른 모듈로 바꾸어서 만드는 것을 말함*/
 
     /* Strict Type-Checking Options */
-    "strict": true /* Enable all strict type-checking options. 만약 false로 지정하게 되면 아래 있는 옵션들 중 각각 원하는 것만 선택해서 사용할 수 있다*/,
+    "strict": true /* Enable all strict type-checking options. 만약 false로 지정하게 되면 아래 있는 옵션들 중 각각 원하는 것만 선택해서 사용할 수 있다. 하지만 보통 기본적으로 true로 두고 사용한다*/,
     // "noImplicitAny": true,                 /* Raise error on expressions and declarations with an implied 'any' type. */
     // "strictNullChecks": true,              /* Enable strict null checks. */
     // "strictFunctionTypes": true,           /* Enable strict checking of function types. */
